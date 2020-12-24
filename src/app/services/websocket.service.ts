@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {io, Socket} from 'socket.io-client/build/index';
 import { environment } from 'src/environments/environment';
+import { User } from '../models/user.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -9,6 +10,7 @@ export class WebsocketService {
 
   public socketStatus=false;
   private socket:Socket;
+  public user: User;
 
   constructor() {
     this.socket = io(environment.wsUrl);
@@ -29,8 +31,6 @@ export class WebsocketService {
    }
 
    emit( event:string, payload?: any, callback?: Function ){
-    //emit('evento', payload, callback)
-    console.log('Emitiendo', event);
     this.socket.emit(event, payload, callback);
    }
 
@@ -41,4 +41,17 @@ export class WebsocketService {
         });
       });
    }
+
+   loginWS( name: string): Observable<any>{
+    //TODO: jw token
+    return new Observable(observer => {
+      this.emit('user-config', {name: name}, (res)=>{
+        this.user = new User(name)
+        observer.next(res);
+      })
+    });
+
+   }
+
+
 }
