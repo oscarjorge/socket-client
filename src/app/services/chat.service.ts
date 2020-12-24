@@ -14,12 +14,15 @@ export class ChatService {
   }
   sendMessage(message: string){
     const payload = {
-      from: 'Oscar',
+      from: this.wsService.user.name,
       body: message
     }
     this.wsService.emit('message', payload);
   }
   getMessage(): Observable<any>{
     return this.wsService.listen('message-new');
+  }
+  getPrivateMessage(): Observable<any>{
+    return this.wsService.listen('message-private');
   }
 }

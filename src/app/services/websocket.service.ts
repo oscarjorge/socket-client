@@ -3,17 +3,21 @@ import { Observable } from 'rxjs';
 import {io, Socket} from 'socket.io-client/build/index';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
+import { CacheService } from './cache.service';
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketService {
-
+  private  CHAT_USER: string  = 'chat-user'
   public socketStatus=false;
   private socket:Socket;
   public user: User;
 
-  constructor() {
+  constructor(private cacheService: CacheService) {
     this.socket = io(environment.wsUrl);
+    this.user = this.cacheService.getItem<User>(this.CHAT_USER)
+    if(this.user)
+      this.loginWS(this.user.name).subscribe(()=>{});
     this.checkStatus();
    }
 
@@ -47,11 +51,10 @@ export class WebsocketService {
     return new Observable(observer => {
       this.emit('user-config', {name: name}, (res)=>{
         this.user = new User(name)
+        this.cacheService.setItem(this.CHAT_USER, this.user);
         observer.next(res);
       })
     });
-
    }
-
 
 }
