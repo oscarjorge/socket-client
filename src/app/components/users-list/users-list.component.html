@@ -1,1 +1,11 @@
-<p>users-list works!</p>
+<h1>Usuarios</h1>
+<hr>
+<ul class="list-group">
+  <li class="list-group-item" *ngFor="let user of usersObservable | async">
+    {{user.name}}
+    <span class="badge bg-primary">{{user.room}}</span>
+    <br>
+    <span class="badge bg-info">{{user.id}}</span>
+  </li>
+</ul>
+

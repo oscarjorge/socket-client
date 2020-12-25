@@ -12,4 +12,7 @@ export class CacheService {
   getItem<T>(key: string): T{
     return JSON.parse(localStorage.getItem(key));
   }
+  removeItem(key){
+    localStorage.removeItem(key)
+  }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import {io, Socket} from 'socket.io-client/build/index';
 import { environment } from 'src/environments/environment';
@@ -13,7 +14,7 @@ export class WebsocketService {
   private socket:Socket;
   public user: User;
 
-  constructor(private cacheService: CacheService) {
+  constructor(private cacheService: CacheService, private router: Router) {
     this.socket = io(environment.wsUrl);
     this.user = this.cacheService.getItem<User>(this.CHAT_USER)
     if(this.user)
@@ -25,6 +26,8 @@ export class WebsocketService {
     this.socket.on('connect', () => {
       console.log('Conectado al servidor');
       this.socketStatus=true;
+
+      this.loginWS(this.user?.name).subscribe(()=>{});
     });
 
     this.socket.on('disconnect', () => {
@@ -56,5 +59,14 @@ export class WebsocketService {
       })
     });
    }
+   logoutWS(){
+     this.user = null;
+     this.cacheService.removeItem(this.CHAT_USER);
+     const payload = {
+       name: 'no name'
+     }
+     this.emit('user-config', payload, ()=>{});
+     this.router.navigateByUrl('');
+  }
 
 }

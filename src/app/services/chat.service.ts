@@ -25,4 +25,11 @@ export class ChatService {
   getPrivateMessage(): Observable<any>{
     return this.wsService.listen('message-private');
   }
+  getUsers(): Observable<any>{
+    return this.wsService.listen('users');
+  }
+  emitUsers(){
+    this.wsService.emit('get-users');
+
+  }
 }
